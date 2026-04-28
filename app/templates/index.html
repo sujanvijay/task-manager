@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Task Manager</title>
+</head>
+<body>
+    <h1>Task Manager</h1>
+
+    <input type="text" id="taskInput" placeholder="Enter task">
+    <button onclick="addTask()">Add Task</button>
+
+    <ul id="taskList"></ul>
+
+    <script>
+        function loadTasks() {
+            fetch('/tasks')
+                .then(res => res.json())
+                .then(data => {
+                    let list = document.getElementById("taskList");
+                    list.innerHTML = "";
+                    data.forEach(task => {
+                        let li = document.createElement("li");
+                        li.innerText = task.task;
+                        list.appendChild(li);
+                    });
+                });
+        }
+
+        function addTask() {
+            let task = document.getElementById("taskInput").value;
+
+            fetch('/tasks', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ task: task })
+            }).then(() => {
+                loadTasks();
+            });
+        }
+
+        loadTasks();
+    </script>
+</body>
+</html>
